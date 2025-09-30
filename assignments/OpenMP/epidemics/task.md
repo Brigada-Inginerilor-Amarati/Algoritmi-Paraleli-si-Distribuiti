@@ -1,52 +1,40 @@
-This variant has a maximum number of 20 points
+# OpenMP: Epidemics (max 20 points)
 
-Problem description
+## Problem description
+Implement and parallelize a simplified epidemic evolution simulation using OpenMP.
 
-In this assignment you implement and parallelize a highly simplified simulation model for the evolution of an infectious disease in a population, using parallel programming with OpenMP.
+The complete description is the same as the corresponding Assignment1 variant. If you already implemented that, continue by adding OpenMP parallel versions. If not, implement your own serial version as part of this assignment.
 
-The  complete description of the simulation problem is  the same as in the corresponding Assignment1 Variant.
+## Parallel versions
+- V1: use `parallel for`; investigate different scheduling policies and chunk sizes
+- V2: either manual explicit data partitioning or OpenMP tasks
 
-If you already implemented this variant for Assignment1, you can continue adding parallel versions with OpenMP. You can do this variant of Assignment2 even if you did not do the Epidemics problem for Assignment, but  in this case, you must implement your own serial version as well as part of Assignment2.
+## Expected results
+Output (same as Assignment1) for each person:
+- Final coordinates x, y
+- Final status (infected, immune, susceptible)
+- Infection counter: number of times the person became infected
 
-In this assignment, provide two different parallel versions of the epidemics simulation:
+Output files: if input file was `f.txt`, then `f_serial_out.txt`, `f_omp1_out.txt`, `f_omp2_out.txt`.
 
-    V1: use parallel for,  investigate different scheduling policies and chunksizes
-    V2:  you can either use manual explicit data partitioning or you can use omp tasks
+Only the final result is saved; intermediate states are not saved.
 
-Expected results:
+## Validation and modes
+- Provide automatic verification comparing serial and parallel results.
+- Two running modes: DEBUG (print evolution after each generation) and normal (no printing) for performance.
 
-The output: The same as in Assignment1: For each person:
+## Performance
+- Measure serial and parallel runtimes and compute speedup (exclude I/O time).
+- Repeat for different population sizes, simulation durations, and thread counts.
+- Provide a meaningful discussion of experimental results.
 
-     Final coordinates x, y
-      Final status (infected, immune, susceptible)
-     Infection counter: how many times during the simulation did the person become infected
+## Grading
+- Serial version (from Assignment1 or implemented now): 5 points
+- Parallel version V1: 5 points
+- Parallel version V2: 5 points
+- Working program with required input format: 2 points
+- Automated comparison serial vs parallel: 1 point
+- Time measurement, speedup, graphs, discussion: 2 points
 
-The final output will be saved in files. If input file was  f.txt, then output files are following the name convention f_serial_out.txt, f_omp1_out.txt and f_omp2_out.txt
-
-Only the final result is saved – intermediate status at every simulation time moment is not saved in files.
-
-Implement an automatic verification method to compare that the serial and parallel versions produce the same result.  
-
-The program must provide 2 modes of running: the interactive (DEBUG) mode, when the evolution of the persons is printed after each generation, and the normal mode (without printing) for performance measurements.
-
-Measure serial and parallel runtime and compute the speedup. The measured runtime does NOT include reading initial configuration from file and writing the final configuration in a file.
-
-Repeat measurements for different sizes of the population, number of simulated time units, and different number of threads.
-
- Provide a meaningful discussion of your experimental results.
-
-Grading
-
-Implemented serial version - your own from assignment1 or implemented now  5 points
-
-Implement parallel version1 5 points
-
-Implement parallel version2 5 points
-
-A working program, reading input data in the required format  2 points
-
-Perform comparison between serial and parallel result (provide automated possibility of comparing outputs - they must be the same as the simulation scenario is deterministic) 1 point
-
-Time Measurement, Speedup, Graphs, Discussion 2 point
-
-Your submitted code must at least compile. Code with compilation errors gets zero points.
+Notes:
+- Your submitted code must at least compile. Code with compilation errors gets zero points.

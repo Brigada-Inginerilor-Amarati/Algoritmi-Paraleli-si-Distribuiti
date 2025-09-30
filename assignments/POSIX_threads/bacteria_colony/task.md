@@ -1,53 +1,45 @@
-This variant has a maximum number of only 10 points!
+# POSIX Threads: Bacteria Colony (max 10 points)
 
-Problem description
+## Problem description
+Simulate the evolution of a bacteria colony on a rectangular 2D grid.
 
-Simulate the evolution of a  colony of bacteria that is grown on a culture surface of rectangular shape. The culture surface is a 2D grid and bacteria can grow in grid points.
+Initially, bacteria are seeded at specific grid points (at most one per point). The colony evolves in discrete generations with synchronous updates:
+- Birth: if 3 neighbors around an empty cell, a new bacterium spawns
+- Death: isolation (fewer than 2 neighbors) or overcrowding (more than 3 neighbors)
 
-Initially, bacteria are seeded in certain points of the grid. At each point of the grid there can be at most one bacterium. The bacteria colony evolves in time: bacteria can  multiply or can die.
+Given the initial seeding, determine the final configuration after G generations.
 
-Bacteria multiply  if there is a group of 3 bacteria around an empty grid point, a new bacterium will spawn in that point.
+Input files: first line has rows and columns; each subsequent character is `X` (bacterium) or `.` (empty).
 
-A bacterium dies if it is isolated (it has less than two bacteria around) or if it is suffocated (it has more than 3 bacteria around).
+Reference materials:
+- Example inputs: `bacteria-data.zip`
+- Sequential baseline: `bacteria_algorithm.c`
 
-Multiplication and deaths of bacteria happen synchronously, and time passes discretely in successive generations. Every generation is a result of the preceding one, and the whole computation depends deterministically on the initial configuration.
+## Requirements
+Implement both serial and parallel versions.
 
-Given the configuration of the initial bacterial seeding,  determine  the final configuration of the bacterial colony after a number of G generations.
+Command line: input file, number of generations, number of threads.
 
-Initial configurations are loaded from files. The first line contains the number of rows and columns. Starting with the second line, every character represents a grid point and is an “X” (bacterium) or  “.” (empty).
+Parallel version uses pthreads with grid data partitioning (striping) and barrier synchronization between generations.
 
-Examples of initial configuration input files are provided in bacteria-data.zip
+## Validation and modes
+- Automatic check: serial and parallel results must match.
+- Modes: DEBUG (print grid every generation) and normal (no printing) for measurements.
 
-The bare code implementing the sequential algorithm is given in bacteria_algorithm.c
+## Output
+If input is `f.txt`, outputs are `f_serial_out.txt` and `f_parallel_out.txt`.
 
-Requirements
+Only final configurations are saved.
 
-Implement a program that determines the final configuration both in serial and parallel.
+## Performance
+- Measure serial and parallel runtimes; compute speedup (exclude I/O).
+- Repeat for various grid sizes and thread counts; plot speedup vs threads; discuss results.
 
-The name of the input file, the number of generations and the number of threads for the parallel version are given as command line arguments.
+## Grading
+- Parallel version: 6 points
+- Working program with required input format: 2 points
+- Serial vs parallel comparison: 0.5 point
+- Time measurement, speedup, graphs, discussion: 1.5 points
 
-The parallel version will use pthreads. Use data partitioning of the grid (each thread processes a stripe of the grid)  and barrier synchronization between generations.
-
-Implement an automatic verification method to compare that the serial and parallel versions produce the same result.  
-
-The program must provide 2 modes of running: the interactive (DEBUG) mode, when the evolution of the grid is printed on screen after each generation, and the normal mode (without printing) for performance measurements.
-
-The final configuration will be saved in files. If input file was  f.txt, then output files are following the name convention f_serial_out.txt and f_parallel_out.txt
-
-Only the final result is saved – intermediate configurations for all generations are not saved in files.
-
-Measure serial and parallel runtime and compute the speedup.  The measured runtime does NOT include reading initial configuration from file and writing the final configuration in a file.
-
-Repeat measurements for different sizes of the  input grid and different number of parallel threads and draw the graph of speedup as a function of number of threads for different sized of the input grid. Provide a meaningful discussion of your experimental results.
-
-Grading 
-
-Implement parallel version 6 points
-
-A working program, reading input data in the required format  2 points
-
-Implement comparison between serial and parallel result 0.5 point
-
-Time Measurement, Speedup, Graphs, Discussion 1.5 point 
-
-Your submitted code must at least compile. Code with compilation errors gets zero points.
+Notes:
+- Your submitted code must at least compile. Code with compilation errors gets zero points.

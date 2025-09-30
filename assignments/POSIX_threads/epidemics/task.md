@@ -1,120 +1,73 @@
-This variant has a maximum number of 20 points
+# POSIX Threads: Epidemics (max 20 points)
 
-Problem description
+## Problem description
+Implement and parallelize a simplified epidemic simulation using Pthreads.
 
-Large-scale epidemic simulations have a great importance for public health. However, large-scale simulations  of realistic epidemic models require immense computing power and they are realised as parallel cloud distributed solutions.
+The area is a rectangle; each person has discrete coordinates (x, y). If two persons are in the contagion area, they share the same coordinates.
 
-In this assignment you implement and parallelize a highly simplified simulation model for the evolution of an infectious disease in a population.
+Persons move in discrete time. Each time step, each person makes one move with a simple pattern:
+- Direction (N, S, E, W). At borders, reverse direction until the opposite border is reached.
+- Amplitude: step distance. Passing over intermediate positions does not create contacts; only co-location at the destination can infect.
 
-A community of people inhabit a given area. Assume that the area is of a rectangular form and the position of each person is defined by his/her coordinates x,y.  The coordinates in this problem are discrete variables,  covering a  given fixed small area that is the area where contagion can occur. If 2 persons are in the contagion area, they are at the same coordinates.
+Statuses: infected, immune, susceptible. Sickness lasts `INFECTED_DURATION` steps; then immune for `IMMUNE_DURATION` steps. Each person has current and future status; statuses update each time step based on time and co-located infections.
 
-Some persons are infected with a contagious disease. Do a simulation predicting how the community will be affected by the disease over a period of time. Use the following simplifying assumptions scenario:
+Pseudocode:
+```
+while (simulation not over) {
+  update location for all persons
+  compute future status for all persons
+  advance time; future becomes current
+}
+```
 
-Persons move around. We simulate discrete time. At every time moment, persons can make only one move (change their coordinates once). Each person has a very simplified movement pattern described by:
+## Input
+Command line: `TOTAL_SIMULATION_TIME InputFileName ThreadNumber`
 
-    Direction (N,S, E, W).  A person moves always in the same direction. If going in their moving direction the person arrives at the border of the rectangular simulation area,  the person starts “going back”  (reverses the movement direction, until the opposite border is reached).
-     Amplitude: how far away is one movement (the current coordinate is incremented/decremented by the value of the amplitude).  If the amplitude of one movement spans over intermediate positions where other people are located, these people are NOT considered contacts thus they are not in danger of being infected. Only the people staying for at least one simulation time moment at the same location (the destination of the movement) can get infected.
+Input file contains:
+- MAX_X_COORD, MAX_Y_COORD
+- N persons, each with:
+  - PersonID
+  - Initial coordinates x, y (within bounds)
+  - Initial status (infected=0, susceptible=1). Initially no immune persons; initially infected are infected at time 0.
+  - Movement direction (N=0, S=1, E=2, W=3)
+  - Movement amplitude (integer, less than area dimension on movement direction)
 
-A  Person can be: Infected (they have the disease), immune(they had the disease recently ), susceptible (they are not immune and not currently infected  – they get infected if they are in contact with an infected person). In this simplified model, you can consider that the duration of the sickness is a INFECTED_DURATION constant number of simulation time moments for every person (number of simulation time moments while a person stays infected).  After this time, the person recovers and gets immune for a  IMMUNE_DURATION constant number of time moments.
+## Implementation
+Implement both sequential and parallel versions. The parallel version uses pthreads and divides persons across threads. Provide synchronization so that:
+- all locations are updated before infection status updates
+- all statuses are updated before proceeding to the next time step
 
-Every person has a current status and a future status. The status of a person changes at every simulation time moment. The future status can be determined by the passing of time (healing and getting immunity or losing his  immunity) or can be changed as a function of the current status of other persons at the same location (getting infected).
+## Output
+For each person:
+- Final coordinates x, y
+- Final status (infected, immune, susceptible)
+- Infection counter: number of times infected
 
-While (simulation time is not over)
+Output files: if input is `f.txt`, produce `f_serial_out.txt` and `f_parallel_out.txt`.
 
-     For all persons Update location
+Only final results are saved; intermediate states are not saved.
 
-     For all persons compute future status
+## Validation and modes
+- Automatic verification comparing serial and parallel outputs
+- Modes: DEBUG (print evolution after each generation) and normal (no printing) for performance
 
-     Increment simulation time and make future status à  current
+## Performance
+- Measure serial and parallel runtimes and compute speedup (exclude I/O)
+- Repeat for various population sizes and simulation times; vary thread counts
+- Suggested sizes: population 10K, 20K, 50K, 100K, 500K; time 50, 100, 150, 200, 500
+- Discuss experimental results
 
-                                            
+## Grading
+- Serial version: 5 points
+- Parallel version: 10 points
+- Working program with required input format: 3 points
+- Comparison serial vs parallel: 0.5 point
+- Time measurement, speedup, graphs, discussion: 1.5 points
 
-Requirements:
+Notes:
+- Your submitted code must at least compile. Code with compilation errors gets zero points.
 
-Read initial data:
-
-Following parameters will be given as command line arguments:
-
-TOTAL_SIMULATION_TIME,  InputFileName, ThreadNumber
-
-Input files must contain:
-
-·       Size of simulation area:  MAX_X_COORD, MAX_Y_COORD
-
-·       Number N  of persons in the area.  For each person, on a new line:
-
-o   PersonID
-
-o   Initial coordinates x, y. they must be between 0..MAX_X_COORD, 0..MAX_Y_COORD
-
-o   Initial status: (infected=0, susceptible = 1) Initially we consider that there are no immune persons. For the initially infected persons, we consider that they got infected at the moment zero of the simulation.
-
-o   Movement pattern direction: (N=0, S=1, E=2, W=3)
-
-o   Movement pattern amplitude: an integer number, smaller than the area dimension on the movement direction
-
-PROVIDED INPUT FILES: see LINK HERE
-
-Algorithms implementation:
-
-Implement the algorithm that simulates the evolution of the epidemic both as a sequential and parallel version. The parallel version will take into account the number of threads specified as input argument.
-
-The parallel version will use pthreads.  Divide the persons across the processing threads.  Make sure to have the needed synchronization points between threads! Before going on to update infection status, all persons must have updated locations.  Before going on to simulate next time moment,  all persons must have updated infection status.
-
-Expected results:
-
-The output: For each person:
-
-     Final coordinates x, y
-      Final status (infected, immune, susceptible)
-     Infection counter: how many times during the simulation did the person become infected
-
-The final output will be saved in files. If input file was  f.txt, then output files are following the name convention f_serial_out.txt and f_parallel_out.txt
-
-Only the final result is saved – intermediate status at every simulation time moment is not saved in files.
-
-Implement an automatic verification method to compare that the serial and parallel versions produce the same result.  
-
-The program must provide 2 modes of running: the interactive (DEBUG) mode, when the evolution of the persons is printed after each generation, and the normal mode (without printing) for performance measurements.
-
-Measure serial and parallel runtime and compute the speedup. The measured runtime does NOT include reading initial configuration from file and writing the final configuration in a file.
-
-Repeat measurements for different sizes of the population, number of simulated time units, and different number of threads.
-
-Population sizes:  10K, 20K, 50K, 100K, 500K
-
-Simulation time: 50,  100, 150, 200, 500
-
- Provide a meaningful discussion of your experimental results.
-
-Grading 
-
-Implement serial version 5 points
-
-Implement parallel version 10 points
-
-A working program, reading input data in the required format  3 points
-
-Implement comparison between serial and parallel result 0.5 point
-
-Time Measurement, Speedup, Graphs, Discussion 1.5 point
-
-Your submitted code must at least compile. Code with compilation errors gets zero points.
-
-Examples of input files:
-
-UPDATE: In order to have the Epidemy continuing for a long period of time, the initial data should contain a higher density of persons on the grid (number of persons of the same order of magnitude with number of points). Otherwise, with our simplified mobility assumptions, the epidemy dies out rather quickly and no new infections occur.
-
-Updated input file examples:
-
-epidemics10.txt contains N=10 persons,  on a grid of 4*4, initial infection percentage=20%
-
-epidemics10K.txt contains N=10K persons, on a grid of 110*110, initial infection percentage=20%
-
-epidemics20K.txt N=20K persons
-
-epidemics100K.txt N=100K persons
-
-You can generate your own input files with different sizes using the generator program:  generator_epidemics.c
-
-You will need to generate and use input files going up to several 100K persons.
+Examples and updates:
+- Higher density of persons is recommended to keep the epidemic active longer.
+- Example input files: `epidemics10.txt` (N=10, grid 4×4, 20% infected), `epidemics10K.txt` (N=10K, grid 110×110, 20%), `epidemics20K.txt`, `epidemics100K.txt`.
+- You can generate input files using `generator_epidemics.c`. You will need files up to several 100K persons.

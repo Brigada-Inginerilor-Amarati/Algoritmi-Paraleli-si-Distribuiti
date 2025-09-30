@@ -1,39 +1,57 @@
-This assignment brings max 20 points.
+# MP_Java: Simplified MPI Infrastructure (max 20 points)
 
-Build a very simplified MPI infrastructure.  The goal of this assignment is twofold: to learn to work with socket communication between processes, and to better understand how MPI can be implemented. Recall the discussion at the end of last lecture about a MPI implementation over sockets.
+## Overview
 
-Part 1 (10 points)
+Build a very simplified MPI infrastructure. The goals are:
 
-Implement your "homemade" simplified variant of mpiexec-smpd.   
+- learn socket communication between processes
+- understand how MPI can be implemented
 
-Implement smpd, a  process manager that can be deployed on different hosts. Smpd acts as a server that receives requests to launch programs. It uses sockets to receive requests. It can launch any program found as an executable file in its local file system.
+Recall the lecture discussion about implementing MPI over sockets.
 
-Implement mpiexec, a client program that transmits requests to smpd servers. It  should be used in the form:
+### Part 1 (10 points): Process Manager and Launcher
 
-mpiexec -hosts N  IPADDRESS_1 IPADDRESS_2 ....  IPADDRESS_N program.exe
+Implement your homemade simplified variant of mpiexec-smpd.
 
-In order to be able to develop and test your implementation on a single computer, have also the scenario when multiple smpd servers are started as distinct processes on different ports on localhost. In this case, mpiexec should be used in this form:
+#### smpd (server)
 
-mpiexec -processes N port_1 port_2 .... port_N program.exe
+Implement a process manager deployable on different hosts. It acts as a server that receives requests to launch programs over sockets. It can launch any program found as an executable file in its local file system.
 
-In both cases, there will be created N processes running program.exe and the resulting standard outputs must be shown in the console of mpiexec.
+#### mpiexec (client)
 
-This part does NOT require that you also implement a messaging library.
+Client program that transmits requests to smpd servers.
 
-For  working with processes in Java: see java.lang.ProcessBuilder. It can be used to create processes and to redirect I/O to the parent process.
+Usage with multiple hosts:
 
-Part 2 (10 points)
+``` shell
+mpiexec -hosts N IPADDRESS_1 IPADDRESS_2 ... IPADDRESS_N program.exe
+```
 
-Implement a simplified messaging library that can be used by the programs launched by mpiexec.  Following operations should be  included: 
+Usage with multiple smpd on localhost (different ports):
 
-init - must be first thing called by a program
+``` shell
+mpiexec -processes N port_1 port_2 ... port_N program.exe
+```
 
-comm_size  - returns the number of processes
+In both cases, create N processes running `program.exe` and aggregate their standard outputs in the `mpiexec` console.
 
-comm_rank  - returns the rank of the current process
+Notes:
 
-send(dest, string)  - sends  the string message to the process with rank dest
+- This part does NOT require a messaging library implementation.
+- For working with processes in Java, see `java.lang.ProcessBuilder` (create processes, redirect I/O to parent).
 
-receive - receives a message from any process, returns the received message
+## Part 2 (10 points): Simplified Messaging Library
 
-Demonstrate the usage of your messaging library by implementing a program that uses the implemented messaging functions to communicate between processes. 
+Implement a simplified messaging library used by the programs launched by `mpiexec`.
+
+### Required operations
+
+- `init` — must be first thing called by a program
+- `comm_size` — returns the number of processes
+- `comm_rank` — returns the rank of the current process
+- `send(dest, string)` — sends the string message to process with rank `dest`
+- `receive` — receives a message from any process, returns the message
+
+### Demonstration
+
+Show usage by implementing a program that uses the messaging functions to communicate between processes.

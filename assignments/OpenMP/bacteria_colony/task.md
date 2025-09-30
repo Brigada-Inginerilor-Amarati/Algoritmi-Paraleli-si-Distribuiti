@@ -1,58 +1,47 @@
-This variant has a maximum number of 20 point
+## OpenMP: Bacteria Colony (max 20 points)
 
-Problem description
+## Problem description
+Simulate the evolution of a colony of bacteria grown on a rectangular culture surface.
 
-Simulate the evolution of a  colony of bacteria that is grown on a culture surface of rectangular shape. 
+The general problem description is the same as Assignment1 - Variant Bacteria. Given the initial bacterial seeding, determine the final configuration after G generations. Implement parallel versions using OpenMP.
 
-The general problem description is the same as in Assignment 1 - Variant Bacteria.
+Initial configurations are loaded from files. The first line contains the number of rows and columns. Starting with the second line, each character represents a grid point: `X` (bacterium) or `.` (empty).
 
-Given the configuration of the initial bacterial seeding,  determine  the final configuration of the bacterial colony after a number of G generations.  Implement parallel versions of the simulation algorithm using OpenMP.
+Example input files: `bacteria-data.zip`.
 
-Initial configurations are loaded from files. The first line contains the number of rows and columns. Starting with the second line, every character represents a grid point and is an “X” (bacterium) or  “.” (empty).
+Bare sequential code: `bacteria-algorithm.c`.
 
-Examples of initial configuration input files are provided in bacteria-data.zip.
+## Requirements
+Implement a program that determines the final configuration in both serial and parallel versions.
 
-The bare code implementing the sequential algorithm is given in bacteria-algorithm.c
+Command line arguments: input file name, number of generations, number of threads (for parallel versions).
 
-Requirements
+Parallel versions use OpenMP. For full points, implement 4 versions:
+- V1: `parallel for`; investigate scheduling policies and chunk sizes
+- V2: `parallel for` with threads created once at the beginning
+- V3: manual explicit data partitioning
+- V4: OpenMP tasks
 
-Implement a program that determines the final configuration both in serial and parallel.
+## Validation and modes
+- Automatic validation: each parallel version’s final configuration must match the serial version.
+- Modes: DEBUG (print grid after each generation) and normal (no printing) for performance.
 
-The name of the input file, the number of generations and the number of threads for the parallel versions are given as command line arguments.
+## I/O
+Output files: for input `f.txt`, produce `f_serial_out.txt` and `f_parallel_omp_Vn.txt` (n is the version number).
 
-The parallel versions will use OpenMP.
+Only final results are saved; intermediate generations are not saved.
 
-For full points, implement 4 different parallel versions:
+## Performance
+- Measure serial and parallel runtimes; compute speedup (exclude I/O time).
+- Repeat for different grid sizes and thread counts; plot speedup vs threads for multiple grid sizes; discuss results.
 
-    V1: use parallel for. Investigate various scheduling policies and chunksizes
-    V2: use parallel for but let threads be created only once in the beginning
-    V3: use manual explicit data partitioning
-    V4: use omp tasks
+## Grading
+- Working program with required input format: 2 points
+- Parallel version V1: 4 points
+- Parallel version V2: 4 points
+- Parallel version V3: 4 points
+- Parallel version V4: 4 points
+- Time measurements, validation, speedup graphs, discussion (all variants): 2 points
 
-Implement an automatic validation method to compare that the result (the final configuration) of each parallel versions is the same as  the  result produced by the serial version.  
-
-The program must provide 2 modes of running: the interactive (DEBUG) mode, when the evolution of the grid is printed on screen after each generation, and the normal mode (without any printing) for performance measurements.
-
-The final configuration will be saved in files. If input file was  f.txt, then output files are following the name convention f_serial_out.txt and f_parallel_omp_Vn.txt where for parallel n is the version number.
-
-Only the final result is saved – intermediate configurations for all generations are not saved in files.
-
-Measure serial and parallel runtime and compute the speedup.  The measured runtime does NOT include reading initial configuration from file and writing the final configuration in a file.
-
-Repeat measurements for different sizes of the  input grid and different number of parallel threads and draw the graph of speedup as a function of number of threads for different sized of the input grid. Provide a meaningful discussion of your experimental results.
-
-Grading 
-
-A working program, reading input data in the required format  2 points
-
-Implement parallel version1  4 points
-
-Implement parallel version2  4 points
-
-Implement parallel version3  4 points
-
-Implement parallel version4  4 points
-
-Time Measurements, Validated results by comparisons, Speedup, Graphs, Discussion for all 4 variants. 2 points 
-
-Your submitted code must at least compile. Code with compilation errors gets zero points.
+Notes:
+- Your submitted code must at least compile. Code with compilation errors gets zero points.

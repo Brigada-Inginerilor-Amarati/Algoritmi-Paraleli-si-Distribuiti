@@ -1,43 +1,34 @@
-This variant has a maximum number of 30 points
+# OpenMP: Matrix Multiplication (max 30 points)
 
-Problem description
+## Problem description
+Provide several implementations of matrix multiplication algorithms, both serial and parallel, and analyze their performance. This assignment continues the discussion from `DenseMatrix.pdf`.
 
-In this assignment you will provide several implementations of matrix multiplication algorithms, both serial and parallel versions and analyze their performance. This assignment continues the discussion about matrix  multiplication started in Lecture DenseMatrix.pdf .
+### (i, j, k) loop permutations
+Explore implementations of square matrix multiplication for all 6 permutations of (i, j, k):
+- i-j-k, i-k-j, j-i-k, j-k-i, k-i-j, k-j-i
 
-First, explore several options for different implementations of square matrix multiplications, resulting from the possible permutations in the order in which multiplication loops i, j, k are performed.
+The variants i-j-k and i-k-j are discussed in Lecture and implemented in `omp_matrix_mult.c`.
 
-Implement matrix multiplication variants corresponding to all 6 permutations of (i,j,k): i-j-k, i-k-j, j-i-k, j-k-i, k-i-j, k-j-i. The variants corresponding to i-j-k and i-k-j  have been discussed in Lecture and their implementation given in omp_matrix_mult.c.   Additional reading: why-loops-do-matter-a-story-of-matrix-multiplication
+### Blocked matrix multiplication
+Implement the blocked matrix multiplication algorithm (as suggested in `DenseMatrix.pdf`) in serial and with OpenMP.
+- Handle cases where matrix size is not evenly divisible by the block size
+- Determine a good block size empirically for your computer
 
-For all 6 algorithms, implement serial version and parallel version using OpenMP (first two variants are already given in omp_matrix_mult.c).   Determine which version has the best serial time and which version the best parallel time.
+### Dataset
+- Square matrices N×N, where N varies between 1000 and 3000
+- Values can be generated randomly
 
-Implement also the blocked matrix multiplication algorithm as suggested in Lecture DenseMatrix.pdf . Implement the blocked algorithm in serial and parallel version using OpenMP.
+### Validation
+For each version, validate results by automatic comparison with the classical i-j-k version.
 
-Take into account also the case when  the size of the matrix is not evenly divisible to the block size.
+## Grading
+- Serial versions of all (ijk) permutation algorithms: 6 points
+- Parallel versions of all (ijk) permutation algorithms: 6 points
+- Serial version of blocked algorithm: 7 points
+- Parallel version of blocked algorithm: 7 points
+- Automatic validation vs classical i-j-k: 1 point
+- Performance measurements and discussion for (ijk) algorithms (serial and parallel): 1.5 points
+- Performance measurements and discussion for blocked algorithm + block size experiments: 1.5 points
 
-Perform experiments to determine which is a good block size for your computer.
-
-Additional reading: Anatomy of High-Performance Many-Threaded Matrix Multiplication.
-
-For all algorithms, work with square matrixes N*N, where size N varies between 1000 and 3000.
-
-The matrix values can be generated randomly.
-
-For each algorithm version, validate its result by implementing an automatic comparison with the result produced by the classical i-j-k algorithm version.
-
-Grading
-
-Implement serial versions of all (ijk) permutation algorithms:  6 points
-
-Implement parallel versions of all (ijk) permutation algorithms: 6 points
-
-Implement serial version of blocked algorithm: 7 points
-
-Implement parallel version of blocked algorithm: 7 points
-
-Validate all results by automatic comparison with ground truth produced by classical i-j-k version: 1 points
-
-Performance measurements and presentation and discussion of results for all (ijk) algorithms, serial and parallel: 1.5 points
-
-Performance measurements and presentation and discussion of results for blocked algorithm + block size experiments, serial and parallel: 1.5 points
-
-Your submitted code must at least compile. Code with compilation errors gets zero points.
+Notes:
+- Your submitted code must at least compile. Code with compilation errors gets zero points.
